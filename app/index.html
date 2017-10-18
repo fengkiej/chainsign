@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ChainSign - Digitally Sign the Data</title>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <script src="./app.js"></script>
+
+</head>
+<body>
+  <h1>ChainSign</h1>
+  <h2>Demo</h2>
+  <h3>How to use</h3>
+  <ol>
+    <li>Make sure your Ethereum account is ready.</li>
+    <li>Select file using document selector.</li>
+    <li>Hash of the file will be generated.</li>
+    <li>Then, you can do:
+      <ul>
+        <li>`Sign` to sign the document and record it on the blockchain.</li>
+        <li>`Show Owner` to show document owner.</li>
+        <li>`Show Registrant` to show who first registers the document.</li>
+        <li>Put an Ethereum address and click `Check` to check whether a document has been signed by that address.</li>
+        <li>Put a target Ethereum address and click `Transfer` to transfer document ownership to that address.</li>
+      </ul>
+    </li>
+  </ol>
+  <br>
+  <h3>Generate file's hash</h3>
+  <form>
+    <label for="file">Select a document:</label>
+    <input name="file" id="file" type="file"/>
+  </form>
+  <span id="hash_info">SHA-256 hash digest:   </span>
+  <br>
+</body>
+</html>
