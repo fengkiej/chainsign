@@ -7,30 +7,89 @@
 
 </head>
 <body>
-  <h1>ChainSign</h1>
-  <h2>Demo</h2>
+  <div class="container" style="padding:0px">
+    <div class="row">
+      <div class="col-md-7">
+        <h1>ChainSign</h1>
+        <h2>Demo</h2>
+      </div>
+      <div class="col-md-5">
+        <label for="addresses">Choose an account:</label>
+        <select name="addresses" id="addresses" style="width: 100%">
+
+        </select> 
+      </div>
+    </div>
+  </div>
   <h3>How to use</h3>
   <ol>
-    <li>Make sure your Ethereum account is ready.</li>
+    <li>Make sure the Ethereum account is ready.</li>
     <li>Select file using document selector.</li>
-    <li>Hash of the file will be generated.</li>
+    <li>Hash and other information of the file will be fetched.</li>
     <li>Then, you can do:
       <ul>
         <li>`Sign` to sign the document and record it on the blockchain.</li>
-        <li>`Show Owner` to show document owner.</li>
-        <li>`Show Registrant` to show who first registers the document.</li>
-        <li>Put an Ethereum address and click `Check` to check whether a document has been signed by that address.</li>
-        <li>Put a target Ethereum address and click `Transfer` to transfer document ownership to that address.</li>
+        <li>`Verify` to verify whether a party has signed the document or not.</li>
+        <li>`Transfer Ownership` to transfer the ownership of the document</li>
       </ul>
     </li>
   </ol>
+  <h3>Document Information</h3>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10">
+        <form id="form1">
+          <label for="file">Select a document:</label>
+          <input name="file" id="file" type="file"/>
+          <br><br>
+          <label for="hash_info">SHA-256 hash digest</label>
+          <input name="hash_info" id="hash_info" placeholder="please load a file..." readonly>
+          <label for="owner_info">Owned by</label>
+          <input name="owner_info" id="owner_info" placeholder="please load a file..." readonly>
+          <label for="registrant_info">Registered by</label>
+          <input name="registrant_info" id="registrant_info" placeholder="please load a file..." readonly>
+        </form>
+      </div>
+      <div class="col-md-2">
+        <button class="smallfont" id="refreshbtn" onclick="App.show_doc_info()">Refresh Document Details</button>
+      </div>
+    </div>
+  </div>
   <br>
-  <h3>Generate file's hash</h3>
-  <form>
-    <label for="file">Select a document:</label>
-    <input name="file" id="file" type="file"/>
-  </form>
-  <span id="hash_info">SHA-256 hash digest:   </span>
-  <br>
+   <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-4">
+       <h3>Sign Document</h3>
+       <span id="doc_status">Please upload a file.</span>
+       <br><br>
+       <button id="signbtn" onclick ="App.sign_doc()">Sign Document</button>
+      </div>
+      <div class="col-md-4">
+       <h3>Verify Document</h3>
+       <label for="by_address">Address</label>
+       <input name="by_address" id="by_address" placeholder="e.g. 0x028ab26ad7ce6fe3c4dc239bf9f91c8cdfa8baa5">
+       <span id="verify_status">Please input an Ethereum address to compare with.</span>
+       <br><br>
+       <button id="verifybtn" onclick ="App.verify_doc()">Verify Signed Document</button>
+      </div>
+      <div class="col-md-4">
+       <h3>Transfer Ownership</h3>
+      <label for="target_address">Target Address</label>
+       <input name="target_address" id="target_address" placeholder="e.g. 0x028ab26ad7ce6fe3c4dc239bf9f91c8cdfa8baa5" readonly>
+       <span id="transfer_status">You must own the document to transfer its ownership.</span>
+       <br><br>
+       <button id="transferbtn" onclick ="App.transfer_ownership()">Transfer Document Ownership</button>
+      </div>
+    </div>
+  </div>
+  <br><br><br>
+   <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <p style="text-align:right">Project Github: <a href="https://github.com/fengkiej/chainsign">https://github.com/fengkiej/chainsign</a><br>Copyright © Fengkie Junis, 2017</p>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

@@ -11,9 +11,18 @@ label {
 }
 
 input {
-  width: 500px;
+  width: 100%;
   padding: 5px;
   font-size: 16px;
+}
+
+span {
+  width: 100%;
+}
+
+button.smallfont {
+  font-size: 12px;
+  padding: 3px;
 }
 
 button {

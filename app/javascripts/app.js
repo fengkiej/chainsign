@@ -1,6 +1,6 @@
 // Import the page's CSS. Webpack will know what to do with it.
 import "../stylesheets/app.css";
-
+import "../stylesheets/bootstrap-grid.css";
 // Import libraries we need.
 import { default as Web3} from 'web3';
 import { default as contract } from 'truffle-contract'
@@ -18,10 +18,11 @@ var ChainSign = contract(chainsign_artifacts);
 var accounts;
 var account;
 var file_hash;
+var owner_info;
 
 window.App = {
   start: function() {
-    var self =
+    var self = this;
     // Bootstrap the MetaCoin abstraction for Use.
     ChainSign.setProvider(web3.currentProvider);
 
@@ -37,9 +38,22 @@ window.App = {
         return;
       }
 
+      var addresses = document.getElementById("addresses");
+      var index = 0;
+      accs.forEach(function(acc){
+        var option = document.createElement("option");
+        option.value= index;
+        option.innerHTML = acc;
+
+        addresses.appendChild(option);
+        index++;
+      });
+
       accounts = accs;
       account = accounts[0];
 
+      document.getElementById('form1').reset();
+      document.getElementById('by_address').value ='';
       //CLEANING UP NEEDED
       function handleFile(){
         var f = document.getElementById("file").files[0]; 
@@ -47,24 +61,163 @@ window.App = {
         if (f) {
           var r = new FileReader();
           r.onload = function(e) { 
+            var hash_info = document.getElementById('hash_info');
             var contents = e.target.result;
-            var hash_info_text = document.getElementById('hash_info');
+            hash_info.value = "generating document hash..."
             file_hash = "0x" + SHA256.hex(contents);
-            hash_info_text.innerHTML = "SHA-256 hash digest: " + file_hash;
+            //alert(contents);  
+            self.show_doc_info();
           }
       
         r.readAsArrayBuffer(f);
         }   
       }
 
+      function changeAddress(){
+        var f = document.getElementById("addresses").value; 
+
+        account = accounts[f];
+        alert("Account changed to: \n" + account);
+      }
+
       document.getElementById('file').addEventListener('change', handleFile, false);
+      document.getElementById('addresses').addEventListener('change', changeAddress, false);
     });
   },
 
-  has_signed: function(){
-
+  show_doc_info: function(){
+    var self = this;
+    self.show_doc_hash();
+    self.show_doc_owner();
+    self.show_doc_registrant();
+    self.show_doc_signed();
   },
 
+  show_doc_owner: function(){
+    var self = this;
+    var owner_info = document.getElementById('owner_info');
+    var target_address = document.getElementById('target_address');
+    var transfer_status = document.getElementById('transfer_status');
+    ChainSign.deployed().then(function(instance) {
+      return instance.get_owner.call(file_hash, {from: account});
+    }).then(function(value) {
+      if(value.valueOf() == 0){
+        owner_info.value = 'none'
+      } else {
+        owner_info.value = value.valueOf();
+      }
+
+      if(account == owner_info.value){
+        target_address.readOnly = false;
+        transfer_status.innerHTML = "You can transfer the ownership of this document."
+      } else {
+        target_address.readOnly = true;
+        transfer_status.innerHTML = "You must own the document to transfer its ownership."
+      }
+    }).catch(function(e) {
+      console.log(e);
+      owner_info.value = 'error';
+    });
+  },
+
+  show_doc_registrant: function(){
+    var self = this;
+    var registrant_info = document.getElementById('registrant_info');
+    ChainSign.deployed().then(function(instance) {
+      return instance.get_registrant.call(file_hash, {from: account});
+    }).then(function(value) {
+      if(value.valueOf() == 0){
+        registrant_info.value = 'none'
+      } else {
+        registrant_info.value = value.valueOf();
+      }
+    }).catch(function(e) {
+      console.log(e);
+      registrant_info.value = 'error';
+    });
+  },
+
+  show_doc_hash: function(){
+    var self = this;
+    var hash_info = document.getElementById('hash_info');
+    hash_info.value = file_hash;
+  },
+
+  set_html_doc_status: function(message){
+    doc_status = document.getElementById('doc_status');
+    doc_status.innerHTML = message;
+  },
+
+  show_doc_signed: function(){
+    var self = this;
+    ChainSign.deployed().then(function(instance) {
+      return instance.get_signature_block.call(account, file_hash, {from: account});
+    }).then(function(value) {
+      if(value.valueOf() != 0){
+        self.set_html_doc_status('You have signed this document at <b>block ' + value.valueOf() + "</b>");
+      } else {
+        self.set_html_doc_status('You never signed this document.');
+      }
+      
+    }).catch(function(e) {
+      console.log(e);
+      self.set_html_doc_status("error");
+    });
+  },
+
+  sign_doc: function(){
+    var self = this;
+
+    ChainSign.deployed().then(function(instance) {
+      self.set_html_doc_status("signing...");
+      return instance.sign(file_hash, {from: account});
+    }).then(function(value) {
+      self.show_doc_info();
+      alert("signature recorded at: " + value.valueOf().tx);
+    }).catch(function(e) {
+      console.log(e);
+      self.set_html_doc_status("err:<br><br>This address might have been signed this document before.<br>Click <b>`refresh`</b> to see which block");
+    });
+  },
+
+  transfer_ownership: function(){
+    var self = this;
+    var target_address = document.getElementById('target_address');
+    var transfer_status = document.getElementById('transfer_status');
+
+    ChainSign.deployed().then(function(instance) {
+      transfer_status.innerHTML = "transferring...";
+      return instance.transfer_ownership(file_hash, target_address.value, {from: account});
+    }).then(function(value) {
+      self.show_doc_info();
+      target_address.value = '';
+      alert("transfer success, tx receipt:\n " + value.valueOf().tx);
+    }).catch(function(e) {
+      console.log(e);
+      target_address.value = '';
+      transfer_status.innerHTML = "err:<br><br>You must own the document to transfer its ownership.";
+    });
+  },
+
+  verify_doc: function(){
+    var self = this;
+    var verify_status = document.getElementById('verify_status');
+    var target_address = document.getElementById('by_address').value; //TODO: validate input
+
+    ChainSign.deployed().then(function(instance) {
+      verify_status.innerHTML = "verifying..."
+      return instance.get_signature_block.call(target_address, file_hash, {from: account});
+    }).then(function(value) {
+      if(value.valueOf() != 0){
+        verify_status.innerHTML = 'This address signed this document at <b>block ' + value.valueOf() + "</b>.";
+      } else {
+        verify_status.innerHTML = 'This address never signed this document before.';
+      }
+    }).catch(function(e) {
+      console.log(e);
+      verify_status.innerHTML = 'error';
+    });
+  }
 
 };
 
