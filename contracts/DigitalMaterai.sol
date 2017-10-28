@@ -21,6 +21,7 @@ contract DigitalMaterai is ERC20 {
     uint256 _totalSupply; 
     mapping(address => uint256) balances;
 	mapping(address => mapping (address => uint256)) allowed;
+	mapping(bytes32 => mapping (address => uint256)) materai_record;
 
     modifier onlyOwner() {
         if (msg.sender != owner) {
@@ -87,5 +88,20 @@ contract DigitalMaterai is ERC20 {
         _totalSupply += mintedAmount;
         Transfer(0, this, mintedAmount);
         Transfer(this, target, mintedAmount);
+    }
+
+    function stampDocument(bytes32 docHash, uint256 amount) public {
+    	require(amount == 3000*10 ** uint256(decimals) || amount == 6000*10 ** uint256(decimals));
+    	require(balances[msg.sender] >= amount);
+    	require(materai_record[docHash][msg.sender] == 0);
+
+    	balances[0x0] += amount;
+    	balances[msg.sender] -= amount;
+    	_totalSupply -= amount;
+    	materai_record[docHash][msg.sender] = amount;
+    }
+
+    function readStamped(bytes32 docHash) constant public returns (uint){
+    	return materai_record[docHash][msg.sender];
     }
 }

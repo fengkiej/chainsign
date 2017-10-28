@@ -96,11 +96,34 @@ window.App = {
   },
 
   transfer_materai: function(){
-    
-  }
+    var self = this;
+    var target_address = document.getElementById("target_address").value;
+    var amount = document.getElementById("amount").value * 1e+18;
+    DigitalMaterai.deployed().then(function(instance) {
+      return instance.transfer(target_address, amount, {from: account});
+    }).then(function(value) {
+      self.refresh_balance();
+      document.getElementById("transfer_status").innerHTML = "transfer success"
+    }).catch(function(e) {
+      console.log(e)
+      document.getElementById("transfer_status").innerHTML = "transfer failed"
+    });
+  },
+
+  mint_token: function(){
+    var self = this;
+   
+    DigitalMaterai.deployed().then(function(instance) {
+      return instance.mintToken(account, 1000000*1e+18, {from: account});
+    }).then(function(value) {
+      self.refresh_balance();
+    }).catch(function(e) {
+      console.log(e)
+      alert("not authorized!")
+    });
+  },
 
   refresh_balance: function(){
-    var self = this;
     DigitalMaterai.deployed().then(function(instance) {
       return instance.balanceOf.call(account, {from: account});
     }).then(function(value) {
@@ -116,6 +139,7 @@ window.App = {
     self.show_doc_owner();
     self.show_doc_registrant();
     self.show_doc_signed();
+    self.show_doc_stamped();
   },
 
   show_doc_owner: function(){
@@ -183,10 +207,46 @@ window.App = {
       } else {
         self.set_html_doc_status('You never signed this document.');
       }
-      
     }).catch(function(e) {
       console.log(e);
       self.set_html_doc_status("error");
+    });
+  },
+
+  show_doc_stamped: function(){
+    DigitalMaterai.deployed().then(function(instance) {
+      return instance.readStamped.call(file_hash, {from: account});
+    }).then(function(value) {
+      if(value.valueOf() != 0){
+        document.getElementById('stamped_status').innerHTML = "stamped with materai Rp" + value.valueOf()/1e+18;
+      } else {
+        document.getElementById('stamped_status').innerHTML = "";
+      }
+    }).catch(function(e) {
+      console.log(e);
+      alert("error");
+    });
+  },
+
+  sign: function(){
+    var self = this;
+    if(use_materai){
+      self.stamp_document();
+    }
+    self.sign_doc();
+  },
+
+  stamp_document: function(){
+    var self = this;
+    var amount = materai_amount*1e+18;
+    DigitalMaterai.deployed().then(function(instance) {
+      return instance.stampDocument(file_hash, amount, {from: account});
+    }).then(function(value) {
+      self.refresh_balance();
+      alert("stamping success");
+    }).catch(function(e) {
+      console.log(e);
+      alert("stamping failed");
     });
   },
 

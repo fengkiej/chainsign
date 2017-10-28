@@ -136,10 +136,10 @@
     "1509181561548": {
       "events": {},
       "links": {},
-      "address": "0x4e932f47e1ca510526fd6601f569601918f6a939",
-      "updated_at": 1509181627680
+      "address": "0x231ea7debdfa2565c1fc1c8ba11b4ffafff9586c",
+      "updated_at": 1509187543922
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1509181627680
+  "updated_at": 1509187543922
 }

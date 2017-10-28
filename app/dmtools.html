@@ -30,7 +30,10 @@
     <div class = "row">
       <input style="width: 31%" id="target_address" placeholder="target address">
       <input style="width: 31%" id="amount" placeholder="amount">
-      <button onclick="App.faucet()">Send</button>
+      <button onclick="App.transfer_materai()">Send</button>
+    </div>
+    <div class = "row">
+      <span id="transfer_status"></span>
     </div>
   </div>
   <br>
@@ -47,3 +50,4 @@
 </html>
 <form id="form1" hidden>
 <input id="by_address" hidden>
+<input id="file" hidden>
