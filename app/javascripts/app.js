@@ -8,9 +8,11 @@ import { SHA256 } from "../javascripts/asmcrypto.js";
 
 // Import our contract artifacts and turn them into usable abstractions.
 import chainsign_artifacts from '../../build/contracts/ChainSign.json'
+import materai_artifacts from '../../build/contracts/DigitalMaterai.json'
 
 // MetaCoin is our usable abstraction, which we'll use through the code below.
 var ChainSign = contract(chainsign_artifacts);
+var DigitalMaterai = contract(materai_artifacts);
 
 // The following code is simple to show off interacting with your contracts.
 // As your needs grow you will likely need to change its form and structure.
@@ -19,12 +21,15 @@ var accounts;
 var account;
 var file_hash;
 var owner_info;
+var use_materai;
+var materai_amount;
+var address_token_amount;
 
 window.App = {
   start: function() {
     var self = this;
-    // Bootstrap the MetaCoin abstraction for Use.
     ChainSign.setProvider(web3.currentProvider);
+    DigitalMaterai.setProvider(web3.currentProvider);
 
     // Get the initial account balance so it can be displayed.
     web3.eth.getAccounts(function(err, accs) {
@@ -54,6 +59,9 @@ window.App = {
 
       document.getElementById('form1').reset();
       document.getElementById('by_address').value ='';
+
+      self.refresh_balance();
+
       //CLEANING UP NEEDED
       function handleFile(){
         var f = document.getElementById("file").files[0]; 
@@ -78,10 +86,27 @@ window.App = {
 
         account = accounts[f];
         alert("Account changed to: \n" + account);
+
+        self.refresh_balance();
       }
 
       document.getElementById('file').addEventListener('change', handleFile, false);
       document.getElementById('addresses').addEventListener('change', changeAddress, false);
+    });
+  },
+
+  transfer_materai: function(){
+    
+  }
+
+  refresh_balance: function(){
+    var self = this;
+    DigitalMaterai.deployed().then(function(instance) {
+      return instance.balanceOf.call(account, {from: account});
+    }).then(function(value) {
+      document.getElementById("balance").innerHTML = "Materai Owned = Rp" + value.valueOf()/1e+18;
+    }).catch(function(e) {
+      console.log(e)
     });
   },
 
@@ -231,6 +256,23 @@ window.App = {
     document.body.removeChild(tempInput);
   },
 
+  show_hide_materai: function(){
+    var f = document.getElementById('use_materai').checked;
+    var g = document.getElementById('materai').value;
+    if(f){
+      document.getElementById('materai').style.display = 'block';
+      materai_amount = g;
+      console.log(materai_amount);  
+    } else {
+      document.getElementById('materai').style.display = 'none';
+    }
+    use_materai = f;
+  },
+
+  change_materai_amount: function(){
+    materai_amount = document.getElementById('materai').value;
+    console.log(materai_amount);
+  }
 };
 
 window.addEventListener('load', function() {

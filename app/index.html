@@ -17,6 +17,7 @@
         <label for="addresses">Choose an account:</label>
         <select name="addresses" id="addresses" style="width: 100%">
         </select> 
+        <span id="balance">Materai Owned = Rp0</span>
         <button class="smallfont" onclick="App.copy_address();" style="float:right">copy</button>
       </div>
     </div>
@@ -62,6 +63,19 @@
        <h3>Sign Document</h3>
        <span id="doc_status">Please upload a file.</span>
        <br><br>
+       <div class="row">
+        <div class="col-md-1">
+          <input type="checkbox" id="use_materai" name="use_materai" onclick="App.show_hide_materai()">
+        </div>
+        <div class="col-md-11">
+        Attach 'materai digital'<br>
+        </div>
+       </div>
+       <select name="materai" id="materai" style="width: 100%" hidden onclick="App.change_materai_amount()">
+        <option value=3000>Rp3000</option>
+        <option value=6000>Rp6000</option>
+       </select> 
+       <br>
        <button id="signbtn" onclick ="App.sign_doc()">Sign Document</button>
       </div>
       <div class="col-md-4">

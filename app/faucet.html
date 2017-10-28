@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Materai Digital | ChainSign - Digitally Sign the Data</title>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <script src="./app.js"></script>
+
+</head>
+<body>
+  <div class="container" style="padding:0px">
+    <div class="row">
+      <div class="col-md-7">
+        <h1>ChainSign</h1>
+        <h2>Demo</h2>
+      </div>
+      <div class="col-md-5">
+        <label for="addresses">Choose an account:</label>
+        <select name="addresses" id="addresses" style="width: 100%">
+        </select> 
+        <span id="balance">Materai Owned = Rp0</span>
+        <button class="smallfont" onclick="App.copy_address();" style="float:right">copy</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class = "row">
+      <h3>Transfer Materai Digital</h3>
+    </div>
+    <div class = "row">
+      <input style="width: 31%" id="target_address" placeholder="target address">
+      <input style="width: 31%" id="amount" placeholder="amount">
+      <button onclick="App.faucet()">Send</button>
+    </div>
+  </div>
+  <br>
+  <div class="container">
+    <div class = "row">
+      <h3>Mint New Materai</h3>
+    </div>
+    <div class = "row">
+      <button onclick="App.mint_token()">Mint Rp1.000.000 Materai Digital (only owner)</button>
+    </div>
+  </div>
+
+</body>
+</html>
+<form id="form1" hidden>
+<input id="by_address" hidden>
