@@ -6,7 +6,7 @@ body {
 }
 
 input[type=checkbox]{
-  -webkit-appearance: checkbox;
+  -webkit-appearance: none;
 }
 
 label {
