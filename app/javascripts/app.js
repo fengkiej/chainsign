@@ -193,7 +193,7 @@ window.App = {
   },
 
   set_html_doc_status: function(message){
-    doc_status = document.getElementById('doc_status');
+    var doc_status = document.getElementById("doc_status");
     doc_status.innerHTML = message;
   },
 
