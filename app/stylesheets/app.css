@@ -5,6 +5,10 @@ body {
   font-family: "Open Sans", sans-serif;
 }
 
+input[type=checkbox]{
+  -webkit-appearance: checkbox;
+}
+
 label {
   display: inline-block;
   width: 200px;
