@@ -1,4 +1,6 @@
 const path = require('path');
+var webpack = require('webpack');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
@@ -13,11 +15,19 @@ module.exports = {
     filename: 'app.js'
   },
   plugins: [
+    new webpack.DefinePlugin({ // <-- key to reducing React's size
+      'process.env': {
+        'NODE_ENV': JSON.stringify('dev')
+      }
+    }),
+
+    new UglifyJSPlugin(), //minify everything
+    new webpack.optimize.AggressiveMergingPlugin(),//Merge chunks
     // Copy our app's index.html to the build folder.
     new CopyWebpackPlugin([
       { from: './app/index.html', to: "index.html" },
       { from: './app/dmtools.html', to: "dmtools.html" }
-    ])
+    ]),
   ],
   module: {
     rules: [
