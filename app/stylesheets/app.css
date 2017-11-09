@@ -5,9 +5,9 @@ body {
   font-family: "Open Sans", sans-serif;
 }
 
-input[type=checkbox]{
-  transform: scale(5);
+input[type="checkbox"]{
   -webkit-appearance:checkbox;
+  border-radius: 0;
 }
 
 label {
